@@ -14,6 +14,8 @@ namespace EShopSolution.Data.Entities
 
         public Guid UserId { get; set; }
 
+        public AppUser User { get; set; }
+
         public Product Product { get; set; }
 
         public DateTime DateCreated { get; set; }
