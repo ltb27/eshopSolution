@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EShopSolution.Data.Configurations;
 using EShopSolution.Data.Entities;
+using EShopSolution.Data.Extension;
 using Microsoft.EntityFrameworkCore;
 
 namespace EShopSolution.Data.Context
@@ -32,6 +33,10 @@ namespace EShopSolution.Data.Context
             modelBuilder.ApplyConfiguration(new ProductTranslationConfiguration());
             modelBuilder.ApplyConfiguration(new PromotionConfiguration());
             modelBuilder.ApplyConfiguration(new TransactionConfiguration());
+
+            // data seeding
+
+            modelBuilder.Seed();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
