@@ -1,6 +1,6 @@
-using Microsoft.EntityFrameworkCore;
-using EShopSolution.Data.Enums;
 using EShopSolution.Data.Entities;
+using EShopSolution.Data.Enums;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace EShopSolution.Data.Configurations
