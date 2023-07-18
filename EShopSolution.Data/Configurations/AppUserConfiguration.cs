@@ -10,7 +10,7 @@ namespace EShopSolution.Data.Configurations
         {
             builder.ToTable("AppUsers");
 
-            builder.Property(x => x.FirstName).IsRequired().HasMaxLength(200);
+            builder.Property(x => x.FirstName).HasMaxLength(200).IsRequired();
             builder.Property(x => x.LastName).HasMaxLength(200).IsRequired();
             builder.Property(x => x.DOB).IsRequired();
         }

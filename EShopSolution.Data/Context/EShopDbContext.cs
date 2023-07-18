@@ -39,7 +39,6 @@ namespace EShopSolution.Data.Context
             // config Identity Entity
             modelBuilder.ApplyConfiguration(new AppUserConfiguration());
             modelBuilder.ApplyConfiguration(new AppRoleConfiguration());
-            
             modelBuilder.Entity<IdentityUserClaim<Guid>>().ToTable("AppUserClaims");
             modelBuilder
                 .Entity<IdentityUserRole<Guid>>()
