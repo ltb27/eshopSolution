@@ -1,13 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using EShopSolution.Data.Configurations;
 using EShopSolution.Data.Entities;
 using EShopSolution.Data.Extension;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace EShopSolution.Data.Context
 {
