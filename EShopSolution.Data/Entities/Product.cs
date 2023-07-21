@@ -12,10 +12,9 @@ namespace EShopSolution.Data.Entities
         public int ViewCount { set; get; }
         public DateTime DateCreated { set; get; }
         public List<ProductInCategory> ProductInCategories { get; set; }
-        public List<OrderDetail> OrderDetails { get; set; }
-        public List<Cart> Carts { get; set; }
-        public List<ProductTranslation> ProductTranslations { get; set; }
-
+        public virtual List<OrderDetail> OrderDetails { get; set; }
+        public virtual List<Cart> Carts { get; set; }
+        public virtual List<ProductTranslation> ProductTranslations { get; set; }
         public virtual ICollection<ProductImage> Images { get; set; }
     }
 }

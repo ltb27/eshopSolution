@@ -1,10 +1,7 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using EShopSolution.Application.Catalog.Products.Dto.Manage;
+using EshopSolution.PageModel.Catalog.Product.Manage;
 
-namespace EShopSolution.Application.Catalog.Products.Dto
+namespace EshopSolution.PageModel.Catalog.Product
 {
     public class GetProductPagingRequest : PagingRequestBase
     {

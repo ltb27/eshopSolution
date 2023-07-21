@@ -1,6 +1,8 @@
-﻿namespace EShopSolution.Application.Catalog.Products.Dto.Manage
+﻿using Microsoft.AspNetCore.Http;
+
+namespace EshopSolution.PageModel.Catalog.Product.Manage
 {
-    public class ProductUpdateRequest
+    public abstract class ProductUpdateRequest
     {
         public int Id { get; set; }
         public string Name { set; get; }
@@ -10,5 +12,6 @@
         public string SeoTitle { set; get; }
         public string SeoAlias { get; set; }
         public string LanguageId { set; get; }
+        public IFormFile ThumbnailImage { get; set; }
     }
 }

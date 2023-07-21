@@ -1,17 +1,33 @@
+using System;
 using EShopSolution.Data.Configurations;
 using EShopSolution.Data.Entities;
 using EShopSolution.Data.Extension;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace EShopSolution.Data.Context
 {
     public class EShopDbContext : IdentityDbContext<AppUser, AppRole, Guid>
     {
         public EShopDbContext(DbContextOptions options)
-            : base(options) { }
+            : base(options)
+        {
+        }
+
+        public DbSet<Product> Products { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<ProductInCategory> ProductInCategories { get; set; }
+        public DbSet<CategoryTranslation> CategoryTranslations { get; set; }
+        public DbSet<ProductTranslation> ProductTranslations { get; set; }
+        public DbSet<OrderDetail> OrderDetails { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<Language> Languages { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<AppConfig> AppConfigs { get; set; }
+        public DbSet<Contact> Contacts { get; set; }
+        public DbSet<Promotion> Promotions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -60,19 +76,5 @@ namespace EShopSolution.Data.Context
         {
             base.OnConfiguring(optionsBuilder);
         }
-
-        public DbSet<Product> Products { get; set; }
-        public DbSet<Category> Categories { get; set; }
-        public DbSet<ProductInCategory> ProductInCategories { get; set; }
-        public DbSet<CategoryTranslation> CategoryTranslations { get; set; }
-        public DbSet<ProductTranslation> ProductTranslations { get; set; }
-        public DbSet<OrderDetail> OrderDetails { get; set; }
-        public DbSet<Order> Orders { get; set; }
-        public DbSet<Cart> Carts { get; set; }
-        public DbSet<Language> Languages { get; set; }
-        public DbSet<Transaction> Transactions { get; set; }
-        public DbSet<AppConfig> AppConfigs { get; set; }
-        public DbSet<Contact> Contacts { get; set; }
-        public DbSet<Promotion> Promotions { get; set; }
     }
 }
