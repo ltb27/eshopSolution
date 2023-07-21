@@ -61,8 +61,19 @@ namespace EShopSolution.Application.Catalog.Products
             // save image
             if (request.ThumbnailImage != null)
             {
-                // product.Ima
+                product.Images = new List<ProductImage>()
+                {
+                    new ProductImage()
+                    {
+                        Caption = "Thumbnail Image",
+                        DateCreated = DateTime.Now,
+                        FileSize = request.ThumbnailImage.Length,
+                        ImagePath = await this.SaveFile((request.ThumbnailImage)),
+                        SortOrder = 1
+                    }
+                };
             }
+            
             db.Products.Add(product);
 
             return await db.SaveChangesAsync();
@@ -218,7 +229,8 @@ namespace EShopSolution.Application.Catalog.Products
             var originalFileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
             var fileName = $"{Guid.NewGuid()}{Path.GetExtension(originalFileName)}";
 
-            await storageService.SaveFileAsync(file.OpenReadStream(), fileName);
+             await storageService.SaveFileAsync(file.OpenReadStream(), fileName);
+             return storageService.GetFileUrl(fileName: fileName);
         }
     }
 }
