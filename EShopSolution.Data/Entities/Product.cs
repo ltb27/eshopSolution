@@ -15,5 +15,6 @@ namespace EShopSolution.Data.Entities
         public virtual List<OrderDetail> OrderDetails { get; set; }
         public virtual List<Cart> Carts { get; set; }
         public virtual List<ProductTranslation> ProductTranslations { get; set; }
+        public virtual ICollection<ProductImage> Images { get; set; }
     }
 }
