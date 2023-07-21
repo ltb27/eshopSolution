@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using EShopSolution.Application.Catalog.Products.Dto;
-using EShopSolution.Application.Catalog.Products.Dto.Public;
+using EshopSolution.PageModel.Catalog.Product.Public;
+using EshopSolution.PageModel.Common;
 
 namespace EShopSolution.Application.Catalog.Products
 {

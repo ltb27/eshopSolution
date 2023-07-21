@@ -1,6 +1,6 @@
-using EShopSolution.Data.Enums;
 using System;
 using System.Collections.Generic;
+using EShopSolution.Data.Enums;
 
 namespace EShopSolution.Data.Entities
 {

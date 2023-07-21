@@ -1,23 +1,21 @@
-﻿using EShopSolution.Application.Catalog.Products.Dto;
-using EShopSolution.Application.Catalog.Products.Dto.Manage;
-using EShopSolution.Application.Catalog.Products.Dto.Public;
-using EShopSolution.Application.Extension.Query;
-using EShopSolution.Data.Context;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using EShopSolution.Application.Extension.Query;
+using EShopSolution.Data.Context;
+using EshopSolution.PageModel.Catalog.Product.Public;
+using EshopSolution.PageModel.Common;
+using Microsoft.EntityFrameworkCore;
 
 namespace EShopSolution.Application.Catalog.Products
 {
     public class PublicProductService : IPublicProductService
     {
-        private readonly EShopDbContext db;
+        private readonly EShopDbContext _db;
 
         public PublicProductService(EShopDbContext db)
         {
-            this.db = db;
+            _db = db;
         }
 
         public async Task<PagedResult<ProductViewModel>> GetAllByCategoryId(
@@ -25,7 +23,7 @@ namespace EShopSolution.Application.Catalog.Products
         )
         {
             // query and include loading
-            var query = db.Products.AsQueryable();
+            var query = _db.Products.AsQueryable();
 
             query = query
                 .Include(q => q.ProductTranslations)
@@ -33,29 +31,27 @@ namespace EShopSolution.Application.Catalog.Products
                 .ThenInclude(pc => pc.Category);
 
             if (request.CategoryId.HasValue && request.CategoryId.Value > 0)
-            {
                 query = query.Where(
                     q => q.ProductInCategories.Any(pc => request.CategoryId.Value == pc.CategoryId)
                 );
-            }
 
             // count
-            int total = await query.CountAsync();
+            var total = await query.CountAsync();
 
             // pagination
-            query = query.Pagination(request.pageSize, request.pageIndex);
+            query = query.Pagination(request.PageSize, request.PageIndex);
 
             // mapping
-            List<ProductViewModel> products = await query
+            var products = await query
                 .Select(
                     q =>
                         new
                         {
-                            Id = q.Id,
-                            Price = q.Price,
-                            OriginalPrice = q.OriginalPrice,
-                            Stock = q.Stock,
-                            ViewCount = q.ViewCount,
+                            q.Id,
+                            q.Price,
+                            q.OriginalPrice,
+                            q.Stock,
+                            q.ViewCount,
                             CreateDate = q.DateCreated,
                             ProductTranslation = q.ProductTranslations.FirstOrDefault(
                                 x =>
@@ -87,7 +83,7 @@ namespace EShopSolution.Application.Catalog.Products
                 )
                 .ToListAsync();
 
-            PagedResult<ProductViewModel> pagedResult = new PagedResult<ProductViewModel>()
+            var pagedResult = new PagedResult<ProductViewModel>
             {
                 Total = total,
                 Items = products

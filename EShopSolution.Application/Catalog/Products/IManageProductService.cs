@@ -1,7 +1,7 @@
-﻿using EShopSolution.Application.Catalog.Products.Dto.Manage;
-using EShopSolution.Application.Catalog.Products.Dto;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using EshopSolution.PageModel.Catalog.Product;
+using EshopSolution.PageModel.Catalog.Product.Manage;
+using EshopSolution.PageModel.Common;
 
 namespace EShopSolution.Application.Catalog.Products
 {
