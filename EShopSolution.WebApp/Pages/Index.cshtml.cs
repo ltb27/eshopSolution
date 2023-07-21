@@ -14,7 +14,6 @@ namespace EShopSolution.WebApp.Pages
 
         public void OnGet()
         {
-
         }
     }
 }

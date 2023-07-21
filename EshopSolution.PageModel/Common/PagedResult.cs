@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace EShopSolution.Application.Catalog.Products.Dto
+namespace EshopSolution.PageModel.Common
 {
     public class PagedResult<T>
     {

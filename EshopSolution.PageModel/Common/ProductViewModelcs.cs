@@ -1,13 +1,16 @@
-﻿namespace EShopSolution.Application.Catalog.Products.Dto.Manage
+﻿using System;
+
+namespace EshopSolution.PageModel.Common
 {
-    public class ProductCreateRequest
+    public class ProductViewModel
     {
-        public string Name { get; set; }
+        public int Id { get; set; }
         public decimal Price { get; set; }
-
         public decimal OriginalPrice { get; set; }
-
         public int Stock { get; set; }
+        public int ViewCount { get; set; }
+        public DateTime CreateDate { get; set; }
+        public string Name { set; get; }
         public string Description { set; get; }
         public string Details { set; get; }
         public string SeoDescription { set; get; }

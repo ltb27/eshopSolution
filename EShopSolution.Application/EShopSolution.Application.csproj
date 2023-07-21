@@ -7,6 +7,12 @@
   <ItemGroup>
     <ProjectReference Include="..\EShopSolution.Data\EShopSolution.Data.csproj" />
     <ProjectReference Include="..\EShopSolution.Entities\EShopSolution.Entities.csproj" />
+    <ProjectReference Include="..\EshopSolution.PageModel\EshopSolution.PageModel.csproj" />
+    <ProjectReference Include="..\EshopSolution.WebApp\EshopSolution.WebApp.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Features" Version="3.1.32" />
   </ItemGroup>
 
 </Project>

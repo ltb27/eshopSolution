@@ -1,24 +1,30 @@
-﻿using EShopSolution.Application.Catalog.Products.Dto;
-using EShopSolution.Application.Catalog.Products.Dto.Manage;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
+using EShopSolution.Application.Common;
+using EShopSolution.Application.Extension.Query;
 using EShopSolution.Data.Context;
 using EShopSolution.Data.Entities;
 using EShopSolution.Entities.Exceptions;
+using EshopSolution.PageModel.Catalog.Product;
+using EshopSolution.PageModel.Catalog.Product.Manage;
+using EshopSolution.PageModel.Common;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Linq;
-using EShopSolution.Application.Extension.Query;
 
 namespace EShopSolution.Application.Catalog.Products
 {
     public class ManageProductService : IManageProductService
     {
         private readonly EShopDbContext db;
-
-        public ManageProductService(EShopDbContext db)
+        private readonly IStorageService storageService;
+        public ManageProductService(EShopDbContext db,IStorageService fileStorageService)
         {
             this.db = db;
+            this.storageService = fileStorageService;
         }
 
         public async Task AddViewCount(int productId)
@@ -31,16 +37,16 @@ namespace EShopSolution.Application.Catalog.Products
 
         public async Task<int> Create(ProductCreateRequest request)
         {
-            Product product = new Product()
+            var product = new Product
             {
                 Price = request.Price,
                 OriginalPrice = request.OriginalPrice,
                 Stock = request.Stock,
                 ViewCount = 0,
                 DateCreated = DateTime.Now,
-                ProductTranslations = new List<ProductTranslation>()
+                ProductTranslations = new List<ProductTranslation>
                 {
-                    new ProductTranslation()
+                    new ProductTranslation
                     {
                         LanguageId = request.LanguageId,
                         Name = request.Name,
@@ -51,7 +57,12 @@ namespace EShopSolution.Application.Catalog.Products
                     }
                 }
             };
-
+            
+            // save image
+            if (request.ThumbnailImage != null)
+            {
+                // product.Ima
+            }
             db.Products.Add(product);
 
             return await db.SaveChangesAsync();
@@ -59,10 +70,10 @@ namespace EShopSolution.Application.Catalog.Products
 
         public async Task<int> Delete(int productId)
         {
-            Product product = await db.Products.FirstOrDefaultAsync(x => x.Id == productId);
+            var product = await db.Products.FirstOrDefaultAsync(x => x.Id == productId);
 
             if (product == null)
-                throw new EShopException($"Product with {product.Id} can not found!");
+                throw new EShopException($"Product with {productId} can not found!");
 
             db.Products.Remove(product);
 
@@ -95,30 +106,28 @@ namespace EShopSolution.Application.Catalog.Products
             }
 
             if (request.CategoryIds?.Any() == true)
-            {
                 query = query.Where(
                     q =>
                         q.ProductInCategories.Any(pc => request.CategoryIds.Contains(pc.CategoryId))
                 );
-            }
 
             // count
-            int total = await query.CountAsync();
+            var total = await query.CountAsync();
 
             // pagination
-            query = query.Pagination(request.pageSize, request.pageIndex);
+            query = query.Pagination(request.PageSize, request.PageIndex);
 
             // mapping
-            List<ProductViewModel> products = await query
+            var products = await query
                 .Select(
                     q =>
                         new
                         {
-                            Id = q.Id,
-                            Price = q.Price,
-                            OriginalPrice = q.OriginalPrice,
-                            Stock = q.Stock,
-                            ViewCount = q.ViewCount,
+                            q.Id,
+                            q.Price,
+                            q.OriginalPrice,
+                            q.Stock,
+                            q.ViewCount,
                             CreateDate = q.DateCreated,
                             ProductTranslation = q.ProductTranslations.FirstOrDefault(
                                 x =>
@@ -150,7 +159,7 @@ namespace EShopSolution.Application.Catalog.Products
                 )
                 .ToListAsync();
 
-            PagedResult<ProductViewModel> pagedResult = new PagedResult<ProductViewModel>()
+            var pagedResult = new PagedResult<ProductViewModel>
             {
                 Total = total,
                 Items = products
@@ -161,9 +170,9 @@ namespace EShopSolution.Application.Catalog.Products
 
         public async Task<int> Update(ProductUpdateRequest request)
         {
-            Product product = await db.Products.FirstOrDefaultAsync(x => x.Id == request.Id);
+            var product = await db.Products.FirstOrDefaultAsync(x => x.Id == request.Id);
 
-            ProductTranslation productTranslation =
+            var productTranslation =
                 await db.ProductTranslations.FirstOrDefaultAsync(
                     q => q.ProductId == request.Id && q.LanguageId == request.LanguageId
                 );
@@ -202,6 +211,14 @@ namespace EShopSolution.Application.Catalog.Products
             product.Price += addedQuantity;
 
             return await db.SaveChangesAsync() > 0;
+        }
+
+        private async Task<string> SaveFile(IFormFile file)
+        {
+            var originalFileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+            var fileName = $"{Guid.NewGuid()}{Path.GetExtension(originalFileName)}";
+
+            await storageService.SaveFileAsync(file.OpenReadStream(), fileName);
         }
     }
 }
