@@ -1,0 +1,23 @@
+Index: EShopSolution.Data/Entities/Product.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>using System;\r\nusing System.Collections.Generic;\r\n\r\nnamespace EShopSolution.Data.Entities\r\n{\r\n    public class Product\r\n    {\r\n        public int Id { set; get; }\r\n        public decimal Price { set; get; }\r\n        public decimal OriginalPrice { set; get; }\r\n        public int Stock { set; get; }\r\n        public int ViewCount { set; get; }\r\n        public DateTime DateCreated { set; get; }\r\n        public List<ProductInCategory> ProductInCategories { get; set; }\r\n        public virtual List<OrderDetail> OrderDetails { get; set; }\r\n        public virtual List<Cart> Carts { get; set; }\r\n        public virtual List<ProductTranslation> ProductTranslations { get; set; }\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/EShopSolution.Data/Entities/Product.cs b/EShopSolution.Data/Entities/Product.cs
+--- a/EShopSolution.Data/Entities/Product.cs	(revision 2a772f67882ed62e47f86743427ddfdba497bf9c)
++++ b/EShopSolution.Data/Entities/Product.cs	(date 1689963001447)
+@@ -12,8 +12,8 @@
+         public int ViewCount { set; get; }
+         public DateTime DateCreated { set; get; }
+         public List<ProductInCategory> ProductInCategories { get; set; }
+-        public virtual List<OrderDetail> OrderDetails { get; set; }
+-        public virtual List<Cart> Carts { get; set; }
+-        public virtual List<ProductTranslation> ProductTranslations { get; set; }
++        public List<OrderDetail> OrderDetails { get; set; }
++        public List<Cart> Carts { get; set; }
++        public List<ProductTranslation> ProductTranslations { get; set; }
+     }
+ }
+\ No newline at end of file
