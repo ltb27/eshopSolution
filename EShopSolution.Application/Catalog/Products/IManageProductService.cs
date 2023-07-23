@@ -1,7 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using EshopSolution.PageModel.Catalog.Product;
 using EshopSolution.PageModel.Catalog.Product.Manage;
 using EshopSolution.PageModel.Common;
+using Microsoft.AspNetCore.Http;
 
 namespace EShopSolution.Application.Catalog.Products
 {
@@ -20,5 +22,10 @@ namespace EShopSolution.Application.Catalog.Products
         Task<bool> UpdatePrice(int productId, decimal newPrice);
 
         Task<bool> UpdateStock(int productId, int changingQuantity);
+        Task AddImage(int productId,List<IFormFile> files);
+        Task RemoveImage(int imageId);
+        Task UpdateImage(UpdateImageBody body);
+
+        Task<List<ProductImageViewModel>> GetListImage(int productId);
     }
 }
