@@ -219,6 +219,7 @@ namespace EShopSolution.Application.Catalog.Products
             var fileName = $"{Guid.NewGuid()}{Path.GetExtension(originalFileName)}";
 
             await storageService.SaveFileAsync(file.OpenReadStream(), fileName);
+            return storageService.GetFileUrl(fileName: fileName);
         }
     }
 }
