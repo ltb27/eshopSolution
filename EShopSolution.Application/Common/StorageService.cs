@@ -6,16 +6,17 @@ namespace EShopSolution.Application.Common
 {
     public class FileStorageService : IStorageService
     {
-        private readonly string userContentFolder;
         private const string UserContentFolderName = "user-content";
+        private readonly string userContentFolder;
 
         public FileStorageService(IWebHostEnvironment webHostEnvironment)
         {
             userContentFolder = Path.Combine(webHostEnvironment.WebRootPath, UserContentFolderName);
         }
+
         public string GetFileUrl(string fileName)
         {
-            return $"/{UserContentFolderName}/{fileName}";
+            return $@"{UserContentFolderName}/{fileName}";
         }
 
         public async Task SaveFileAsync(Stream mediaBinaryStream, string fileName)
@@ -28,11 +29,7 @@ namespace EShopSolution.Application.Common
         public async Task DeleteFileAsync(string fileName)
         {
             var filePath = Path.Combine(userContentFolder, fileName);
-            if (File.Exists(filePath))
-            {
-                await Task.Run(() => File.Delete(filePath));
-            }
+            if (File.Exists(filePath)) await Task.Run(() => File.Delete(filePath));
         }
-        
     }
 }

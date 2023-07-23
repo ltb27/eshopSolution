@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using EShopSolution.Data.Configurations;
 using EShopSolution.Data.Entities;
 using EShopSolution.Data.Extension;
@@ -28,6 +29,7 @@ namespace EShopSolution.Data.Context
         public DbSet<AppConfig> AppConfigs { get; set; }
         public DbSet<Contact> Contacts { get; set; }
         public DbSet<Promotion> Promotions { get; set; }
+        public DbSet<ProductImage> ProductImages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -70,11 +72,6 @@ namespace EShopSolution.Data.Context
 
             // data seeding
             modelBuilder.Seed();
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            base.OnConfiguring(optionsBuilder);
         }
     }
 }
