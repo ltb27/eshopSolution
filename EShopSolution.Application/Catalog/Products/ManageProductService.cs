@@ -21,10 +21,11 @@ namespace EShopSolution.Application.Catalog.Products
     {
         private readonly EShopDbContext db;
         private readonly IStorageService storageService;
-        public ManageProductService(EShopDbContext db,IStorageService fileStorageService)
+
+        public ManageProductService(EShopDbContext db, IStorageService fileStorageService)
         {
             this.db = db;
-            this.storageService = fileStorageService;
+            storageService = fileStorageService;
         }
 
         public async Task AddViewCount(int productId)
@@ -57,12 +58,21 @@ namespace EShopSolution.Application.Catalog.Products
                     }
                 }
             };
-            
+
             // save image
             if (request.ThumbnailImage != null)
-            {
-                // product.Ima
-            }
+                product.Images = new List<ProductImage>
+                {
+                    new ProductImage
+                    {
+                        Caption = "Thumbnail Image",
+                        DateCreated = DateTime.Now,
+                        FileSize = request.ThumbnailImage.Length,
+                        ImagePath = await SaveFile(request.ThumbnailImage),
+                        SortOrder = 1
+                    }
+                };
+
             db.Products.Add(product);
 
             return await db.SaveChangesAsync();
@@ -70,14 +80,28 @@ namespace EShopSolution.Application.Catalog.Products
 
         public async Task<int> Delete(int productId)
         {
-            var product = await db.Products.FirstOrDefaultAsync(x => x.Id == productId);
+            var product = await db.Products.Include(x => x.Images).ThenInclude(x => x.ImagePath)
+                .FirstOrDefaultAsync(x => x.Id == productId);
 
             if (product == null)
                 throw new EShopException($"Product with {productId} can not found!");
-
+            
+            // delete images in the directory
+            var imagePaths = product.Images.Select(x => x.ImagePath).ToList();
+            imagePaths.ForEach(DeleteImage);
+            
+            // delete the productImages record in db
+            var productImages = await db.ProductImages.Where(x => x.ProductId == productId).ToListAsync();
+            
+            db.ProductImages.RemoveRange(productImages);
             db.Products.Remove(product);
 
             return await db.SaveChangesAsync();
+        }
+
+        private async void DeleteImage(string filePath)
+        {
+            await storageService.DeleteFileAsync(filePath.Split("/")[1]);
         }
 
         public async Task<PagedResult<ProductViewModel>> GetAllPaging(
@@ -187,6 +211,30 @@ namespace EShopSolution.Application.Catalog.Products
             productTranslation.Description = request.Description;
             productTranslation.Details = request.Details;
 
+            // save image
+            if (request.ThumbnailImage != null)
+            {
+                var exist = await db.ProductImages.FirstOrDefaultAsync(
+                    x => x.IsDefault && x.ProductId == request.Id);
+
+                if (exist == null) return await db.SaveChangesAsync();
+
+                // save the new image
+                exist.FileSize = request.ThumbnailImage.Length;
+
+                var spitedFilePath = exist.ImagePath.Split("/");
+
+                var existFileName = spitedFilePath.Length >= 2 ? spitedFilePath[1] : default;
+
+                // delete the old image
+                if (existFileName != default) await storageService.DeleteFileAsync(existFileName);
+
+                exist.ImagePath = await SaveFile(request.ThumbnailImage);
+
+                // update the record to new image path
+                db.ProductImages.Update(exist);
+            }
+
             return await db.SaveChangesAsync();
         }
 
@@ -213,12 +261,77 @@ namespace EShopSolution.Application.Catalog.Products
             return await db.SaveChangesAsync() > 0;
         }
 
+        public async Task AddImage(int productId, List<IFormFile> files)
+        {
+            var product = await db.Products.FindAsync(productId);
+            if (product == null)
+            {
+                throw new EShopException($"Product with Id: {productId} is not found");
+            }
+
+            var order = 1;
+            foreach (var file in files)
+            {
+                product.Images.Add(new ProductImage()
+                {
+                    Caption = "Product Image",
+                    DateCreated = DateTime.Now,
+                    FileSize = file.Length,
+                    ImagePath = await SaveFile(file),
+                    SortOrder = order
+                });
+                order++;
+            }
+
+            await db.SaveChangesAsync();
+        }
+
+        public async Task RemoveImage(int imageId)
+        {
+            var productImage = await db.ProductImages.FindAsync(imageId);
+            if(productImage == null)
+                throw new EShopException();
+            
+            var fileName = productImage.ImagePath.Split("/")[1];
+
+            await storageService.DeleteFileAsync(fileName);
+            db.ProductImages.Remove(productImage);
+           await db.SaveChangesAsync();
+        }
+
+        public async Task UpdateImage(UpdateImageBody body)
+        {
+            var productImage = await db.ProductImages.FindAsync(body.ImageId);
+            if (productImage == null)
+                throw new EShopException($"Image with Id {body.ImageId} is not found");
+            db.Entry(productImage).CurrentValues.SetValues(body);
+
+            await db.SaveChangesAsync();
+        }
+
+        public async Task<List<ProductImageViewModel>> GetListImage(int productId)
+        {
+            var product = await db.Products.Include(x => x.Images).FirstOrDefaultAsync(x => x.Id == productId);
+            if (product == null)
+                throw new EShopException($"Product with Id: {productId} is not found");
+
+            return product.Images.Select(x => new ProductImageViewModel()
+            {
+                Id = x.Id,
+                FileSize = x.FileSize,
+                IsDefault = x.IsDefault,
+                FilePath = x.ImagePath
+            }).ToList();
+
+        }
+
         private async Task<string> SaveFile(IFormFile file)
         {
             var originalFileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
             var fileName = $"{Guid.NewGuid()}{Path.GetExtension(originalFileName)}";
 
             await storageService.SaveFileAsync(file.OpenReadStream(), fileName);
+            return storageService.GetFileUrl(fileName);
         }
     }
 }
